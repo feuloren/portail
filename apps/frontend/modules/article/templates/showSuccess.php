@@ -7,7 +7,7 @@
     <?php if ($sf_user->isAuthenticated()
       && $sf_user->getGuardUser()->hasAccess($article->getAsso()->getLogin(), 0x04)
     ): ?>
-      <span class="titleaction">
+      <span class="pull-right">
           <i class="icon-edit icon-white"></i>
           <a href="<?php echo url_for('article/edit?id=' . $article->getId()) ?>">Éditer</a>
       </span>
@@ -18,7 +18,7 @@
     <?php echo showThumb($article->getImage(), 'articles', array(
       'width' => 350,
       'height' => 250,
-      'class' => 'affiche'
+      'class' => 'pull-right img-polaroid'
     ), 'scale') ?><br/>
   <?php endif; ?>
 
@@ -35,7 +35,7 @@
 
   <p>
     <a href="https://www.facebook.com/sharer/sharer.php?u=<?php
-    echo urlencode(url_for('article_show', $article))
+    echo urlencode(url_for('article_show', $article, true))
     ?>&t=<?php echo urlencode($article->getName()) ?>" target="_blank" class="facebook">
       Partager sur Facebook
     </a>

@@ -1,25 +1,21 @@
-<style>
-  <!--
-table { border-collapse:collapse; border-spacing: 0px; border:none; width: 640px; }
-table td { padding: 0px; }
-  -->
-</style>
-<table>
+<?php use_helper('Date'); ?>
+<?php use_helper('CrossLink'); ?>
+<table border="0" cellspacing="0" cellpadding="0" width="640">
 <tbody>
 <tr>
-  <td style="padding-left: 30px; height: 30px; color: #FFF; background: url('http://wwwassos.utc.fr/bde/weekmail/top_weekmail.jpg') no-repeat"
+  <td style="padding-left: 30px; height: 30px; color: #FFF; background: url('http://assos.utc.fr/bde/weekmail/top_weekmail.jpg') no-repeat"
     colspan="2" >
-    Weekmail du 3 au 10 Juin
+    Weekmail <?php echo $date; ?>
   </td>
 </tr>
-<tr height="150">
+<tr height="148">
   <td colspan="2" bgcolor="#000">
-    <?php /* <img src="" alt="" width="640" height="150" style="border: none;" /> */ ?>
+  <img src="//assos.utc.fr/images/weekmail/bandeau_horizontal.jpg" alt="" width="640" height="148" style="border: none;" />
   </td>
 </tr>
 <tr>
-  <td rowspan="<?php echo $rows ?>" width="120" style="vertical-align: top; background-color: #000; text-align: center;">
-      <?php /*<img src="" alt="" style="border: none;"/> */ ?>
+  <td rowspan="<?php echo $rows ?>" width="120" valign="top" bgcolor="#000" style="text-align: center;">
+      <img src="//assos.utc.fr/images/weekmail/bandeau_vertical.png" alt="" width="120" style="border: none;"/>
     </p>
   </td>
   <td style="padding-left: 30px;" bgcolor="grey">
@@ -46,8 +42,10 @@ table td { padding: 0px; }
   </td>
 </tr>
 <tr height="40">
-  <td style="text-align: left; padding-left: 30px; background-color: #000; color: #FFF; font-size: large; font-weight: bold;" id="sommaire">
-    SOMMAIRE
+   <td style="text-align: left; padding-left: 30px;" bgcolor="black" id="sommaire">
+    <strong>
+      <span style="color: #ffffff; font-size: large;">SOMMAIRE</span>
+    </strong>
   </td>
 </tr>
 <tr>
@@ -55,32 +53,40 @@ table td { padding: 0px; }
     <p><a href="#evenements">&Eacute;V&Eacute;NEMENTS</a></p>
     <ul>
     <?php foreach(WeekmailArticleTable::getInstance()->getEventsForWeekmail($weekmail->getId())->execute() as $article) : ?>
-      <li><a href="#evenement<?php echo $article->getId() ?>"><?php echo $article->getName() ?></a></li>
+      <li><a href="#evenement<?php echo $article->getId() ?>"><?php echo $article->getAsso()->getName() ?> : <?php echo $article->getName() ?></a></li>
     <?php endforeach ?>
     </ul>
     <p><a href="#articles">ARTICLES</a></p>
     <ul>
     <?php foreach(WeekmailArticleTable::getInstance()->getArticlesForWeekmail($weekmail->getId())->execute() as $article) : ?>
-      <li><a href="#evenement<?php echo $article->getId() ?>"><?php echo $article->getName() ?></a></li>
+      <li><a href="#evenement<?php echo $article->getId() ?>"><?php echo $article->getAsso()->getName() ?> : <?php echo $article->getName() ?></a></li>
     <?php endforeach ?>
     </ul>
   </td>
 </tr>
 <tr height="40">
-  <td style="text-align: left; padding-left: 30px; background-color: #000; color: #FFF; font-size: large; font-weight: bold;" id="evenements">
-    EVENEMENTS
+  <td style="test-align: left; padding-left: 30px;" bgcolor="black" id="evenements">
+    <strong>
+      <span style="color: #ffffff; font-size: large;">EVENEMENTS</span>
+    </strong>
   </td>
 </tr>
 <?php foreach(WeekmailArticleTable::getInstance()->getEventsForWeekmail($weekmail->getId())->execute() as $article) : ?>
   <tr>
-    <td bgcolor="<?php echo $article->getAsso()->getPole()->getCouleur() ?>">
+    <td bgcolor="<?php echo $article->getAsso()->getCouleur() ?>">
       <a name="evenement<?php echo $article->getId() ?>"></a>
-      &nbsp;<?php echo $article->getName() ?>
+      &nbsp;<?php echo $article->getAsso()->getName() ?> : <?php echo $article->getName() ?>
     </td>
   </tr>
   <tr>
     <td style="text-align: justify; padding: 10px 30px;">
+      <p>
+        <?php echo ucfirst(format_date($article->getEvent()->getStartDate(), 'EEEE d MMMM à H:mm', 'fr')) ?>
+        (<?php echo $article->getEvent()->getPlace() ?>)<br />
+      </p>
       <?php echo nl2br($article->getText()) ?>
+      <br />
+      <a href="<?php echo cross_app_link_to('frontend', '@event_show', array('id' => $article->getEventId())) ?>" title="Lire <?php echo $article->getName() ?>">Voir les détails...</a>
     </td>
   </tr>
   <tr>
@@ -93,20 +99,24 @@ table td { padding: 0px; }
 <?php endforeach ?>
 <?php //include_partial('semaineDuPic') ?>
 <tr height="40">
-  <td style="text-align: left; padding-left: 30px; background-color: #000; color: #FFF; font-size: large; font-weight: bold;" id="articles">
-      ARTICLES
+  <td style="test-align: left; padding-left: 30px;" bgcolor="black" id="articles">
+    <strong>
+      <span style="color: #ffffff; font-size: large;">ARTICLES</span>
+    </strong>
   </td>
 </tr>
 <?php foreach(WeekmailArticleTable::getInstance()->getArticlesForWeekmail($weekmail->getId())->execute() as $article) : ?>
   <tr>
-    <td bgcolor="<?php echo $article->getAsso()->getPole()->getCouleur() ?>">
+    <td bgcolor="<?php echo $article->getAsso()->getCouleur() ?>">
       <a name="evenement<?php echo $article->getId() ?>"></a>
-      &nbsp;<?php echo $article->getName() ?>
+      &nbsp;<?php echo $article->getAsso()->getName() ?> : <?php echo $article->getName() ?>
     </td>
   </tr>
   <tr>
     <td style="text-align: justify; padding: 10px 30px;">
       <?php echo nl2br($article->getText()) ?>
+      <br />
+      <a href="<?php echo cross_app_link_to('frontend', '@article_show', array('id' => $article->getArticleId())) ?>" title="Lire <?php echo $article->getName() ?>">Voir sur le portail...</a>
     </td>
   </tr>
   <tr>
@@ -131,7 +141,7 @@ table td { padding: 0px; }
 </tr>
 <tr height="30">
   <td colspan="2">
-    <img src="http://wwwassos.utc.fr/bde/weekmail/down_weekmail.jpg" alt="" width="640" />
+    <img src="http://assos.utc.fr/bde/weekmail/down_weekmail.jpg" alt="" width="640" />
   </td>
 </tr>
 </tbody>

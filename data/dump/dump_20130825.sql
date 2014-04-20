@@ -62,7 +62,7 @@ INSERT INTO `sf_guard_user` (`id`, `first_name`, `last_name`, `email_address`, `
 (1, NULL, NULL, 'kenlerem@etu.utc.fr', 'kenlerem', 'sha1', NULL, NULL, 1, 0, NULL, '2012-04-21 12:00:00', '2012-04-21 12:00:00'),
 (2, NULL, NULL, 'puyouart@etu.utc.fr', 'puyouart', 'sha1', NULL, NULL, 1, 0, NULL, '2012-04-21 12:00:00', '2012-04-21 12:00:00'),
 (3, NULL, NULL, 'mguffroy@etu.utc.fr', 'mguffroy', 'sha1', NULL, NULL, 1, 0, NULL, '2012-04-21 12:00:00', '2012-04-21 12:00:00'),
-(4, 'Yoan', 'Tournade', 'ytournad@etu.utc.fr', 'ytournad', 'sha1', NULL, NULL, 1, 1, NULL, '2012-04-21 12:00:00', '2012-04-21 12:00:00');
+(4, NULL, NULL, 'ytournad@etu.utc.fr', 'ytournad', 'sha1', NULL, NULL, 1, 1, NULL, '2012-04-21 12:00:00', '2012-04-21 12:00:00');
 UPDATE `sf_guard_user` SET `is_active`= 0;
 
 INSERT INTO `asso_member` (`id`, `user_id`, `asso_id`, `role_id`, `semestre_id`, `created_at`, `updated_at`) VALUES
@@ -115,13 +115,13 @@ INSERT INTO `info_job_abonnement_disponibilite` (`id`, `disponibilite_id`, `user
 (1, 1, 4),
 (2, 2, 4);
 
-INSERT INTO `info_job_categorie` (`id`, `name`, `description`) VALUES
-(1, 'Soutien scolaire', 'Description soutien scolaire. Cours chez les particuliers, etc.'),
-(2, 'Aide à domicile', 'Service aux particuliers à domicile, etc.'),
-(3, 'Restauration', 'Description restauration'),
-(4, 'Manutention', 'Description manutention'),
-(5, 'Divers', 'Tout ce qui ne rentre pas les autres catégories'),
-(6, 'Standardiste', 'Description standardiste');
+INSERT INTO `info_job_categorie` (`id`, `name`) VALUES
+(1, 'Soutien scolaire'),
+(2, 'Aide à domicile'),
+(3, 'Restauration'),
+(4, 'Manutention'),
+(5, 'Divers'),
+(6, 'Standardiste');
 
 INSERT INTO `info_job_disponibilite` (`id`, `name`) VALUES
 (1, 'Semaine'),

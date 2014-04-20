@@ -13,9 +13,9 @@ default:
     #language:     en
     #robots:       noindex, nofollow
 
-  stylesheets:    [bootstrap.min.css, main.css, bootstrap-responsive.min.css]
+  stylesheets:    ["//fonts.googleapis.com/css?family=Raleway:900", bootstrap.min.css, main.css, bootstrap-responsive.min.css, font-awesome.min.css]
 
-  javascripts:    [jquery-1.7.2.min.js, bootstrap.min.js, typeahead.min.js, main.js]
+  javascripts:    [jquery-1.7.2.min.js, bootstrap.min.js, main.js, typeahead.min.js] 
 
   has_layout:     true
   layout:         layout

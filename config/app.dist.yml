@@ -19,6 +19,7 @@ all:
     mime_type:
       auto_detect: true
       library: gd_mime_type
+
   # Les valeurs ci-dessous sont a personnaliser
   portail:
     # Semestre actuel
@@ -31,3 +32,16 @@ all:
     dossier_assos: /path/to/folder
     #Adresse email à partir de laquelle sont envoyés les messages d'InfoJob
     infojob_email: bde@assos.utc.fr
+    # Activer le script piwik
+    piwik_is_enable: false
+    # Url de piwik sans le http:// et sans le / final
+    piwik_address: ~
+    # ID du site sur piwik
+    piwik_site_id: 0
+    # Nombre d'annonces par page pour InfoJob
+    offres_par_page: 5
+    # Resolution des miniatures photos et des photos plein ecran
+    photos_thumb_res_x: 250
+    photos_thumb_res_y: 250
+    photos_big_res_x: 1600
+    photos_big_res_y: 900
