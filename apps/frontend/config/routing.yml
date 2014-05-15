@@ -71,13 +71,13 @@ member_delete:
   url:  /asso/membres/:asso/delete/:id
   param: { module: member, action: delete }
 
-asso_search:
-  url:   /asso/search
-  param: { module: asso, action: search }
+search:
+  url:   /search
+  param: { module: search, action: index }
 
-asso_search_json:
-  url:   /asso/search.json
-  param: { module: asso, action: search, sf_format: json }
+search_json:
+  url:   /search.json
+  param: { module: search, action: index, sf_format: json }
 
 asso_charte_post:
   url: /asso/charte

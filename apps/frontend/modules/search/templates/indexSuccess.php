@@ -1,6 +1,6 @@
 <?php use_helper('Text') ?>
 <?php use_helper('Thumb') ?>
-<h1>Associations du pôle</h1>
+<h1>Résultat de la recherche</h1>
 <ul id="assos_list">
   <?php foreach($assos as $asso) : ?>
     <li>

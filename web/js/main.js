@@ -67,4 +67,30 @@ $(document).ready(function(){
 
   if(window.Select2)
     $(".select2").select2({width: 'resolve'});
+  
+  $("#search-box").typeahead([
+    {
+      name: 'portail-search',
+      remote: '/search.json?query=%QUERY*'/*,
+      template: '<p><strong>{{value}}</strong> – {{year}}</p>',
+      engine: Hogan*/
+    }
+  ]);
+  
+  $("#asearch-box").keyup(function(key)
+    {
+      if (this.value.length >= 3)
+      {
+        $("#search-results").html("<em>Loading...</em>");
+        $("#search-results").show();
+        $("#search-results").load(
+          $(this).parents('form').attr('action'),
+          { query: $(this).val() + '*' },
+          function() { $('#loader').hide(); }
+        );
+      }
+      else {
+          $("#search-results").hide();
+      }
+    });
 });
