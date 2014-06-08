@@ -71,13 +71,29 @@ member_delete:
   url:  /asso/membres/:asso/delete/:id
   param: { module: member, action: delete }
 
-search:
-  url:   /search
-  param: { module: search, action: index }
+asso_search:
+  url:   /search/asso
+  param: { module: search, action: asso }
 
-search_json:
-  url:   /search.json
-  param: { module: search, action: index, sf_format: json }
+asso_search_json:
+  url:   /search/asso.json
+  param: { module: search, action: asso, sf_format: json }
+
+article_search:
+  url:   /search/article
+  param: { module: search, article: article }
+
+article_search_json:
+  url:   /search/article.json
+  param: { module: search, action: article, sf_format: json }
+
+event_search:
+  url:   /search/event
+  param: { module: search, action: event }
+
+event_search_json:
+  url:   /search/event.json
+  param: { module: search, action: event, sf_format: json }
 
 asso_charte_post:
   url: /asso/charte

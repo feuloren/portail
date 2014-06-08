@@ -17,4 +17,72 @@ class Article extends BaseArticle
     $asso = $this->getAsso();
     return ($asso->isPole()) ? $asso->getPoleInfos() : $asso->getPole();
   }
+  
+  /** This method has been overloaded for the search functionnality with zend framework
+   * it add the asso to the index file
+   * @see vendor/doctrine/Doctrine/Doctrine_Record::save()
+   */
+  public function save(Doctrine_Connection $conn = null)
+  {
+    $conn = $conn ? $conn : ArticleTable::getInstance()->getConnection();
+    $conn->beginTransaction();
+    try {
+      $ret = parent::save($conn);
+
+      $this->updateLuceneIndex();
+
+      $conn->commit();
+
+      return $ret;
+    } catch(Exception $e) {
+      $conn->rollBack();
+      throw $e;
+    }
+  }
+
+  /** This method has been overloaded for the search functionnality with zend framework
+   * it delete the asso from the index file
+   * @see vendor/doctrine/Doctrine/Doctrine_Record::delete()
+   */
+  public function delete(Doctrine_Connection $conn = null)
+  {
+    $index = ArticleTable::getInstance()->getLuceneIndex();
+
+    foreach($index->find('pk:' . $this->getId()) as $hit)
+    {
+      $index->delete($hit->id);
+    }
+
+    return parent::delete($conn);
+  }
+
+  /**
+   * Method to use the zend framework for search
+   * update the index file used for search
+   */
+  public function updateLuceneIndex()
+  {
+    $index = ArticleTable::getInstance()->getLuceneIndex();
+
+    // remove existing entries
+    foreach($index->find('pk:' . $this->getId()) as $hit)
+    {
+      $index->delete($hit->id);
+    }
+
+
+    $doc = new Zend_Search_Lucene_Document();
+
+    // store asso primary key to identify it in the search results
+    $doc->addField(Zend_Search_Lucene_Field::Keyword('pk', $this->getId()));
+
+    // index asso fields
+    $doc->addField(Zend_Search_Lucene_Field::UnStored('name', $this->getName(), 'utf-8'));
+    $doc->addField(Zend_Search_Lucene_Field::UnStored('text', $this->getText(), 'utf-8'));
+    $doc->addField(Zend_Search_Lucene_Field::UnStored('asso', $this->getAsso()->getName(), 'utf-8'));
+
+    // add asso to the index
+    $index->addDocument($doc);
+    $index->commit();
+  }
 }

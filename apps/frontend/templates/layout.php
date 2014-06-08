@@ -33,7 +33,7 @@
                     <?php endif ?>
                 </ul>
                 <form class="navbar-search pull-right" action="">
-                    <input type="text" id="search-box" class="search-query span2" placeholder="Rechercher" name="query" value="">
+                    <input type="text" id="search-box" class="search-query span2" placeholder="Rechercher" name="query" value=""/>
                 </form>
                 <div id="search-results"></div>
             </div>

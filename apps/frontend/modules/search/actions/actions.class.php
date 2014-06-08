@@ -10,12 +10,7 @@
  */
 class searchActions extends sfActions
 {
- /**
-  * Executes index action
-  *
-  * @param sfRequest $request A request object
-  */
-  public function executeIndex(sfWebRequest $request)
+  public function executeAsso(sfWebRequest $request)
   {
     $this->forwardUnless($query = $request->getParameter('query'), 'asso', 'index');
 
@@ -23,12 +18,31 @@ class searchActions extends sfActions
 
     if($request->isXmlHttpRequest())
     {
-      if('*' == $query || !$this->assos)
-      {
-        return $this->renderText('No results.');
-      }
-
       return $this->renderPartial('asso/list', array('assos' => $this->assos));
+    }
+  }
+
+  public function executeEvent(sfWebRequest $request)
+  {
+    $this->forwardUnless($query = $request->getParameter('query'), 'asso', 'index');
+
+    $this->events = Doctrine_Core::getTable('Event')->getForLuceneQuery($query);
+
+    if($request->isXmlHttpRequest())
+    {
+      return $this->renderPartial('event/list', array('events' => $this->events));
+    }
+  }
+
+  public function executeArticle(sfWebRequest $request)
+  {
+    $this->forwardUnless($query = $request->getParameter('query'), 'asso', 'index');
+
+    $this->articles = Doctrine_Core::getTable('Article')->getForLuceneQuery($query);
+
+    if($request->isXmlHttpRequest())
+    {
+      return $this->renderPartial('article/list', array('articles' => $this->articles));
     }
   }
 }

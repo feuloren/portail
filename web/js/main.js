@@ -67,15 +67,82 @@ $(document).ready(function(){
 
   if(window.Select2)
     $(".select2").select2({width: 'resolve'});
-  
-  $("#search-box").typeahead([
-    {
-      name: 'portail-search',
-      remote: '/search.json?query=%QUERY*'/*,
-      template: '<p><strong>{{value}}</strong> – {{year}}</p>',
-      engine: Hogan*/
-    }
-  ]);
+
+  var searchServices = new Bloodhound({
+    datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
+    queryTokenizer: Bloodhound.tokenizers.whitespace,
+    local: [{name : "Gestion des mails assos",
+                   url : '/gesmail'},
+                  {name : "Webmail asso",
+                   url : '/mail'},
+                  {name : "Outils trésorerie",
+                   url : '/treso.php'},
+                  {name : "Wiki des assos",
+                   url : '/wiki'}]
+  });
+  searchServices.initialize();
+
+  var getSourceFor = function(remote) {
+    var search = new Bloodhound({
+        datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
+        queryTokenizer: Bloodhound.tokenizers.whitespace,
+        remote: remote
+    });
+    search.initialize();
+    return search.ttAdapter();
+  };
+
+  $("#search-box").typeahead({
+      minLength: 3,
+      autoselect: true
+   },
+    [{name: 'assos',
+      source: getSourceFor('/search/asso.json?query=%QUERY*'),
+      displayKey: 'name',
+      templates : {
+        header: '<ul><li class="nav-header" style="margin-top: 0px;">Assos</li>',
+        suggestion: function(res) {
+            return '<li>' + res.name + '</li>'
+        },
+        footer: '</ul>'
+      }
+    },
+    {name: 'events',
+      source: getSourceFor('/search/event.json?query=%QUERY*'),
+      displayKey: 'name',
+      templates : {
+        header: '<ul><li class="nav-header" style="margin-top: 0px;">Évènements</li>',
+        suggestion: function(res) {
+            return '<li>' + res.name + ' par ' + res.asso + '</li>';
+        },
+        footer: '</ul>'
+      }
+    },
+    {name: 'articles',
+      source: getSourceFor('/search/article.json?query=%QUERY*'),
+      displayKey: 'name',
+      templates : {
+        header: '<ul><li class="nav-header" style="margin-top: 0px;">Articles</li>',
+        suggestion: function(res) {
+            return '<li>' + res.name + ' par ' + res.asso + '</li>';
+        },
+        footer: '</ul>'
+      }
+    },
+    {name: 'services',
+     source: searchServices.ttAdapter(),
+     displayKey: 'name',
+     templates : {
+       header: '<ul><li class="nav-header" style="margin-top: 0px;">Services</li>',
+       suggestion: function(res) {
+            return '<li>' + res.name + '</li>'
+       },
+       footer: '</ul>'
+     }
+    },
+    ]).on('typeahead:selected', function(event, res, set) {
+        window.location.replace(res.url);
+   });
   
   $("#asearch-box").keyup(function(key)
     {
