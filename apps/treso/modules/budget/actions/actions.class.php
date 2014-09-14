@@ -30,6 +30,15 @@ class budgetActions extends tresoActions
     $this->getResponse()->setSlot('current_asso', $this->assos);
   }
 
+  public function executeEditeur(sfWebRequest $request)
+  {
+    $this->budget = $this->getRoute()->getObject();
+    $this->asso = $this->budget->getAsso();
+    $this->checkAuthorisation($this->asso);
+
+    $this->getResponse()->setSlot('current_asso', $this->asso);
+  }
+
   public function executeExport(sfWebRequest $request)
   {
     $budget = $this->getRoute()->getObject();
