@@ -35,12 +35,10 @@ budgetEditeurApp.constant('budget', <?php echo json_encode($infos_budget) ?>);
 
 <div class="row-fluid">
     <div class="span6">
-        Dépenses
-        <budget-editeur-tableau model="depenses" />
+        <budget-editeur-tableau model="depenses" nom="Dépenses" />
     </div>
     <div class="span6">
-        Recettes
-        <budget-editeur-tableau model="recettes"/>
+        <budget-editeur-tableau model="recettes" nom="Recettes" />
     </div>
 </div>
 

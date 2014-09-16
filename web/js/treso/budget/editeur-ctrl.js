@@ -30,6 +30,9 @@ budgetEditeurApp.controller('editeurCtrl', function($scope, asso, budget) {
 
 budgetEditeurApp.filter('dotmontant', function() {
     return function(montant) {
+        if (angular.isString(montant)) {
+            montant = parseFloat(montant);
+        }
         var res = Math.floor(montant);
         if (montant % 1 > 0) {
             res += '+';
@@ -39,21 +42,37 @@ budgetEditeurApp.filter('dotmontant', function() {
     };
 });
 
-budgetEditeurApp.directive('budgetEditeurTableau', function() {
+budgetEditeurApp.directive('budgetMontant', function() {
+    return {
+        restrict: 'E',
+        replace: true,
+        template: '<span class="budget-montant" title="{{ montant | currency }}">{{ montant | dotmontant }}</span>',
+        scope: {
+            montant: '@m'
+        }
+    }
+})
+
+budgetEditeurApp.directive('budgetEditeurTableau', function(totalTableau) {
     return {
         restrict: 'E',
         replace: true,
         template: '<div class="budget-table">'+
                     '<div class="budget-thead">'+
                         '<div class="budget-tr">'+
-                            '<div class="budget-td budget-colonne-nom">Nom</div>'+
-                            '<div class="budget-td budget-colonne-montant">Montant</div>'+
+                            '<div class="budget-td budget-colonne-nom">{{ nom }}</div>'+
+                            '<div class="budget-td budget-colonne-montant">Total en € : <budget-montant m="{{ totalTableau(model) }}" /></div>'+
                         '</div>'+
                     '</div>'+
-                    '<budget-editeur-categorie ng-repeat="categorie in model" categorie="categorie" />'+
+                    '<budget-editeur-categorie ng-repeat="categorie in model" categorie="categorie"></budget-editeur-categorie>'+
+                    '<div class="budget-tr budget-placeholder">'+
+                        '<div class="budget-td">Nouvelle catégorie</div>'+
+                        '<div class="budget-td"></div>'+
+                    '</div>'+
                 '</div>',
         scope: {
             model: '=',
+            nom: '@'
         },
         controller: function ($scope, $element) {},
         link: function(scope, element) {
@@ -61,22 +80,24 @@ budgetEditeurApp.directive('budgetEditeurTableau', function() {
 
             };
 
+            scope.totalTableau = totalTableau;
+
             scope.$watch('model', scope.update);
         }
     }
 })
-.directive('budgetEditeurCategorie', function() {
+.directive('budgetEditeurCategorie', function(totalCategorie) {
     return {
         restrict: 'E',
         replace: true,
         template: '<div class="budget-sortable-group budget-tbody">'+
-                    '<div class="budget-tr">'+
-                        '<div class="budget-td budget-colonne-nom"><strong>{{ categorie.nom }}</strong></div>'+
-                        '<div class="budget-td budget-colonne-montant"><strong></strong></div>'+
+                    '<div class="budget-tr budget-tr-categorie">'+
+                        '<div class="budget-td budget-colonne-nom">{{ categorie.nom }}</div>'+
+                        '<div class="budget-td budget-colonne-montant"><budget-montant m="{{ totalCategorie(categorie) }}"/></div>'+
                     '</div>'+
                     '<budget-editeur-ligne ng-repeat="ligne in categorie.lignes" ligne="ligne"></budget-editeur-ligne>'+
-                    '<div class="budget-tr">'+
-                        '<div class="budget-td budget-colonne-nom"><em>Nouvelle ligne</em></div>'+
+                    '<div class="budget-tr budget-placeholder">'+
+                        '<div class="budget-td budget-colonne-nom">Nouvelle ligne</div>'+
                         '<div class="budget-td budget-colonne-montant"></div>'+
                     '</div>'+
                 '</div>',
@@ -89,6 +110,8 @@ budgetEditeurApp.directive('budgetEditeurTableau', function() {
 
             };
 
+            scope.totalCategorie = totalCategorie;
+
             scope.$watch('categorie', scope.update);
         }
     }
@@ -99,7 +122,7 @@ budgetEditeurApp.directive('budgetEditeurTableau', function() {
         replace: true,
         template: '<div class="budget-tr">'+
                     '<div class="budget-td budget-colonne-nom">{{ ligne.nom }}</div>'+
-                    '<div class="budget-td budget-colonne-montant">{{ ligne.qte * ligne.unite | dotmontant }}</div>'+
+                    '<div class="budget-td budget-colonne-montant"><budget-montant m="{{ ligne.qte * ligne.unite }}"/></div>'+
                 '</div>',
         scope: {
             ligne: '=',
@@ -114,3 +137,23 @@ budgetEditeurApp.directive('budgetEditeurTableau', function() {
         }
     }
 });
+
+budgetEditeurApp.factory('totalCategorie', function() {
+    return function(categorie) {
+        var total = 0;
+        for (var i = 0; i < categorie.lignes.length; i++) {
+            var ligne = categorie.lignes[i];
+            total += ligne.unite * ligne.qte;
+        }
+        return total;
+    };
+})
+.factory('totalTableau', function(totalCategorie) {
+    return function(model) {
+        var total = 0;
+        for (var i = 0; i < model.length; i++) {
+            total += totalCategorie(model[i]);
+        }
+        return total;
+    };
+})

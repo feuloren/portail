@@ -200,17 +200,27 @@ tr .expand {
 }
 .budget-td {
     display: table-cell;
-    border: 1px solid black;
+    border: 1px solid #202020;
+    padding: 3px;
 }
-.budget-tr .budget-td:first-child {
-  border-left: 1px solid black;
+.budget-thead {
+  background-color: #B0B0B0;
+  font-weight: 800;
 }
-.budget-table .budget-tr:first-child {
-  border-top: 1px solid black;
+.budget-tr-categorie {
+  background-color: #DEDEDE;
+  font-weight: 700;
 }
 .budget-colonne-nom {
     width: 75%;
 }
 .budget-colonne-montant {
     width: 25%;
+    text-align: right;
+}
+.budget-placeholder {
+  font-style: italic;
+}
+.budget-montant {
+  cursor: help;
 }
