@@ -183,3 +183,34 @@ tr .expand {
 .table-documents .column-transaction {
     width:25%;
 }
+
+.budget-table {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+}
+.budget-thead, .budget-tbody {
+    width: 100%;
+    display: table-row-group;
+}
+.budget-tr {
+    display: table-row;
+    width: 100%;
+}
+.budget-td {
+    display: table-cell;
+    border: 1px solid black;
+}
+.budget-tr .budget-td:first-child {
+  border-left: 1px solid black;
+}
+.budget-table .budget-tr:first-child {
+  border-top: 1px solid black;
+}
+.budget-colonne-nom {
+    width: 75%;
+}
+.budget-colonne-montant {
+    width: 25%;
+}

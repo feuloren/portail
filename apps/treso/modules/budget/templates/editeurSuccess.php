@@ -17,5 +17,31 @@ budgetEditeurApp.constant('budget', <?php echo json_encode($infos_budget) ?>);
 </script>
 
 <div ng-app="BudgetEditeurApp" ng-controller="editeurCtrl">
-Édition du budget {{ budget.nom }} de l'asso {{ asso.nom }}
+<div class="pull-right">
+    <div class="btn-group">
+        <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+        Export <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu">
+            <li><a href="<?php echo url_for('budget_export', $budget) ?>">
+                <i class="icon-share-alt"></i> PDF
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<h1>Budget {{ budget.nom }}</h1>
+
+<div class="row-fluid">
+    <div class="span6">
+        Dépenses
+        <budget-editeur-tableau model="depenses" />
+    </div>
+    <div class="span6">
+        Recettes
+        <budget-editeur-tableau model="recettes"/>
+    </div>
+</div>
+
 </div>

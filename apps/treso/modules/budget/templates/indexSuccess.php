@@ -19,7 +19,7 @@
     <tbody>
       <?php foreach ($budgets as $budget): ?>
       <tr>
-        <td><a href="<?php echo url_for('budget_show', array('id' => $budget->getPrimaryKey())) ?>"><?php echo $budget->getNom() ?></a></td>
+        <td><a href="<?php echo url_for('budget_show', array('id' => $budget->getPrimaryKey())) ?>"><?php echo $budget->getNom() ?></a> - <a href="<?php echo url_for('budget_editeur', array('id' => $budget->getPrimaryKey())) ?>">Editeur javascript</a></td>
         <td><?php echo $budget->getSemestre() ?></td>
         <td><?php echo format_date($budget->getCreatedAt(), 'D', 'fr') ?></td>
       </tr>
