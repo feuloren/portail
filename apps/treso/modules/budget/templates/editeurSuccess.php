@@ -1,6 +1,7 @@
 <?php
 use_javascript('treso/common/portail.js');
 use_javascript('treso/budget/editeur-ctrl.js');
+use_javascript('treso/budget/editeur-ligne.js');
 
 $infos_asso = array('nom' => $asso->getName(),
     'login' => $asso->getLogin(),
@@ -35,10 +36,10 @@ budgetEditeurApp.constant('budget', <?php echo json_encode($infos_budget) ?>);
 
 <div class="row-fluid">
     <div class="span6">
-        <budget-editeur-tableau model="depenses" nom="Dépenses" />
+        <budget-editeur-tableau model="recettes" nom="Dépenses" />
     </div>
     <div class="span6">
-        <budget-editeur-tableau model="recettes" nom="Recettes" />
+        <budget-editeur-tableau model="recettes" nom="Recettes" /> <!-- Pour tester si les donnees sont bien sauvegardees -->
     </div>
 </div>
 

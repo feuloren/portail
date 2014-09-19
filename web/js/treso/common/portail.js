@@ -412,3 +412,10 @@ angular.module('Portail', [])
         }
     };
 })
+.factory('softCopy', function() {
+    return function(source, target, attrs) {
+        for(var i = 0; i < attrs.length; i++) {
+            target[attrs[i]] = source[attrs[i]];
+        }
+    }
+})

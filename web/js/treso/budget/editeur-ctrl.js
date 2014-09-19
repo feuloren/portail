@@ -7,11 +7,59 @@ budgetEditeurApp.controller('editeurCtrl', function($scope, asso, budget) {
     $scope.recettes = [{
         nom: 'Subventions',
         id: 1,
-        lignes : []
+        lignes : [{
+            nom: 'T-Shirts',
+            qte: 15,
+            unite: 8
+        }, {
+            nom: 'Participation Hebergement',
+            qte: 5,
+            unite: 15.34
+        }, {
+            nom: 'T-Shirts',
+            qte: 15,
+            unite: 8
+        }, {
+            nom: 'Participation Hebergement',
+            qte: 5,
+            unite: 15.34
+        }, {
+            nom: 'T-Shirts',
+            qte: 15,
+            unite: 8
+        }, {
+            nom: 'Participation Hebergement',
+            qte: 5,
+            unite: 15.34
+        }, {
+            nom: 'T-Shirts',
+            qte: 15,
+            unite: 8
+        }, {
+            nom: 'Participation Hebergement',
+            qte: 5,
+            unite: 15.34
+        }]
     }, {
         nom: 'Sponsors',
         id: 2,
-        lignes : []
+        lignes : [{
+            nom: 'T-Shirts',
+            qte: 15,
+            unite: 8
+        }, {
+            nom: 'Participation Hebergement',
+            qte: 5,
+            unite: 15.34
+        }, {
+            nom: 'T-Shirts',
+            qte: 15,
+            unite: 8
+        }, {
+            nom: 'Participation Hebergement',
+            qte: 5,
+            unite: 15.34
+        }]
     }, {
         nom: 'Participation des membres',
         id: 3,
@@ -21,8 +69,104 @@ budgetEditeurApp.controller('editeurCtrl', function($scope, asso, budget) {
             unite: 8
         }, {
             nom: 'Participation Hebergement',
-            qte: 15.34,
-            unite: 5
+            qte: 5,
+            unite: 15.34
+        }, {
+            nom: 'T-Shirts',
+            qte: 15,
+            unite: 8
+        }, {
+            nom: 'Participation Hebergement',
+            qte: 5,
+            unite: 15.34
+        }, {
+            nom: 'T-Shirts',
+            qte: 15,
+            unite: 8
+        }, {
+            nom: 'Participation Hebergement',
+            qte: 5,
+            unite: 15.34
+        }, {
+            nom: 'T-Shirts',
+            qte: 15,
+            unite: 8
+        }, {
+            nom: 'Participation Hebergement',
+            qte: 5,
+            unite: 15.34
+        }, {
+            nom: 'T-Shirts',
+            qte: 15,
+            unite: 8
+        }, {
+            nom: 'Participation Hebergement',
+            qte: 5,
+            unite: 15.34
+        }]},
+        {
+        nom: 'Autre',
+        id: 3,
+        lignes : [{
+            nom: 'T-Shirts',
+            qte: 15,
+            unite: 8
+        }, {
+            nom: 'Participation Hebergement',
+            qte: 5,
+            unite: 15.34
+        }, {
+            nom: 'T-Shirts',
+            qte: 15,
+            unite: 8
+        }, {
+            nom: 'Participation Hebergement',
+            qte: 5,
+            unite: 15.34
+        }, {
+            nom: 'T-Shirts',
+            qte: 15,
+            unite: 8
+        }, {
+            nom: 'Participation Hebergement',
+            qte: 5,
+            unite: 15.34
+        }, {
+            nom: 'T-Shirts',
+            qte: 15,
+            unite: 8
+        }, {
+            nom: 'Participation Hebergement',
+            qte: 5,
+            unite: 15.34
+        }, {
+            nom: 'T-Shirts',
+            qte: 15,
+            unite: 8
+        }, {
+            nom: 'Participation Hebergement',
+            qte: 5,
+            unite: 15.34
+        }, {
+            nom: 'Participation Hebergement',
+            qte: 5,
+            unite: 15.34
+        }, {
+            nom: 'T-Shirts',
+            qte: 15,
+            unite: 8
+        }, {
+            nom: 'Participation Hebergement',
+            qte: 5,
+            unite: 15.34
+        }, {
+            nom: 'T-Shirts',
+            qte: 15,
+            unite: 8
+        }, {
+            nom: 'Participation Hebergement',
+            qte: 5,
+            unite: 15.34
         }]
     }];
     $scope.depenses = [];
@@ -51,7 +195,51 @@ budgetEditeurApp.directive('budgetMontant', function() {
             montant: '@m'
         }
     }
-})
+});
+
+budgetEditeurApp.directive('editableText', function() {
+    return {
+        restrict: 'EA',
+        replace: true,
+        template: '<input class="budget-edit-field" type="text" ng-model="buffer.t" ng-keypress="key($event)" ng-blur="save()"/>',
+        scope: {
+            content: '='
+        },
+        link: function(scope, element, attrs) {
+            scope.buffer = {t : scope.content};
+
+            scope.save = function() {
+                scope.content = scope.buffer.t;
+            };
+
+            scope.cancel = function() {
+                scope.buffer.t = scope.content;
+            }
+
+            scope.key = function(event) {
+                console.log(event);
+                if (event.key == 13) {
+                    scope.save();
+                    element.blur();
+                }
+                else if (event.key == 27) {
+                    scope.cancel();
+                    element.blur();
+                } else if (event.key == 9) {
+                    scope.save();
+                    element.blur();
+                } else if (event.key == 38 || event.key == 40) {
+                    scope.save();
+                    element.blur();
+                }
+            };
+
+            scope.$watch('content', function() {
+                scope.buffer.t = scope.content;
+            });
+        }
+    };
+});
 
 budgetEditeurApp.directive('budgetEditeurTableau', function(totalTableau) {
     return {
@@ -65,8 +253,8 @@ budgetEditeurApp.directive('budgetEditeurTableau', function(totalTableau) {
                         '</div>'+
                     '</div>'+
                     '<budget-editeur-categorie ng-repeat="categorie in model" categorie="categorie"></budget-editeur-categorie>'+
-                    '<div class="budget-tr budget-placeholder">'+
-                        '<div class="budget-td">Nouvelle catégorie</div>'+
+                    '<div class="budget-tr">'+
+                        '<div class="budget-td budget-placeholder">Nouvelle catégorie</div>'+
                         '<div class="budget-td"></div>'+
                     '</div>'+
                 '</div>',
@@ -77,63 +265,66 @@ budgetEditeurApp.directive('budgetEditeurTableau', function(totalTableau) {
         controller: function ($scope, $element) {},
         link: function(scope, element) {
             scope.update = function() {
-
+                //console.log("tableau", scope.model);
             };
 
             scope.totalTableau = totalTableau;
 
-            scope.$watch('model', scope.update);
+            scope.$watchCollection('model', scope.update); // watch for delete / add categories
         }
     }
 })
-.directive('budgetEditeurCategorie', function(totalCategorie) {
+.directive('budgetEditeurCategorie', function(totalCategorie, softCopy) {
     return {
         restrict: 'E',
         replace: true,
         template: '<div class="budget-sortable-group budget-tbody">'+
                     '<div class="budget-tr budget-tr-categorie">'+
-                        '<div class="budget-td budget-colonne-nom">{{ categorie.nom }}</div>'+
+                        '<div class="budget-td budget-colonne-nom"><editable-text content="categorie.nom"/></div>'+
                         '<div class="budget-td budget-colonne-montant"><budget-montant m="{{ totalCategorie(categorie) }}"/></div>'+
                     '</div>'+
-                    '<budget-editeur-ligne ng-repeat="ligne in categorie.lignes" ligne="ligne"></budget-editeur-ligne>'+
-                    '<div class="budget-tr budget-placeholder">'+
-                        '<div class="budget-td budget-colonne-nom">Nouvelle ligne</div>'+
+                    '<budget-editeur-ligne-trans class="budget-tr" ng-repeat="ligne in categorie.lignes" ligne="ligne" edit-cancel="cancelLigne(api)" edit-validate="validateLigne(api)" edit-blur="validateLigne(api)">'+
+                        '<div class="budget-td budget-colonne-nom" ng-click="edit(\'nom\')">{{ ligne.nom }}</div>'+
+                        '<div class="budget-td budget-colonne-montant" ng-click="edit(\'unite\')"><budget-montant m="{{ ligne.qte * ligne.unite }}"></budget-montant></div>'+
+                    '</budget-editeur-ligne-trans>'+
+                    '<budget-editeur-ligne-trans class="budget-tr" ligne="newLine" edit-cancel="cancelNewLigne(api)" edit-validate="validateNewLigne(api)" edit-blur="pauseNewLigne(api)">'+
+                        '<div class="budget-td budget-colonne-nom budget-placeholder" ng-click="edit(\'nom\')"><span>Nouvelle ligne</span></div>'+
                         '<div class="budget-td budget-colonne-montant"></div>'+
-                    '</div>'+
+                    '</budget-editeur-ligne>'+
                 '</div>',
         scope: {
             categorie: '=',
         },
-        controller: function ($scope, $element) {},
         link: function(scope, element) {
-            scope.update = function() {
+            scope.emptyNewLine = function() { return {nom: "", qte: 1, unite: ""}; };
+            scope.newLine = scope.emptyNewLine();
 
+            scope.validateLigne = function(ligneEditeur) {
+                ligneEditeur.save();
+                ligneEditeur.stop();
             };
+
+            scope.cancelLigne = function(ligneEditeur) {
+                ligneEditeur.undoChanges();
+            }
+
+            scope.pauseNewLigne = function(ligneEditeur) {
+                ligneEditeur.stop();
+            };
+
+            scope.validateNewLigne = function(ligneEditeur) {
+                // TODO : gérer les inputs avec des virgules comme séparateur décimal
+                // directive frDecimalInput ?
+                scope.categorie.lignes.push(ligneEditeur.get());
+                ligneEditeur.set(scope.emptyNewLine());
+                ligneEditeur.edit('nom');
+            };
+
+            scope.cancelNewLigne = function(ligneEditeur) {
+                ligneEditeur.set(scope.emptyNewLine());
+            }
 
             scope.totalCategorie = totalCategorie;
-
-            scope.$watch('categorie', scope.update);
-        }
-    }
-})
-.directive('budgetEditeurLigne', function() {
-    return {
-        restrict: 'E',
-        replace: true,
-        template: '<div class="budget-tr">'+
-                    '<div class="budget-td budget-colonne-nom">{{ ligne.nom }}</div>'+
-                    '<div class="budget-td budget-colonne-montant"><budget-montant m="{{ ligne.qte * ligne.unite }}"/></div>'+
-                '</div>',
-        scope: {
-            ligne: '=',
-        },
-        controller: function ($scope, $element) {},
-        link: function(scope, element) {
-            scope.update = function() {
-
-            };
-
-            scope.$watch('ligne', scope.update);
         }
     }
 });

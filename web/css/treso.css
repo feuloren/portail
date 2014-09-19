@@ -201,7 +201,7 @@ tr .expand {
 .budget-td {
     display: table-cell;
     border: 1px solid #202020;
-    padding: 3px;
+    padding: 4px;
 }
 .budget-thead {
   background-color: #B0B0B0;
@@ -210,6 +210,10 @@ tr .expand {
 .budget-tr-categorie {
   background-color: #DEDEDE;
   font-weight: 700;
+}
+.budget-tr input {
+  font-weight: inherit;
+  color: inherit;
 }
 .budget-colonne-nom {
     width: 75%;
@@ -220,7 +224,30 @@ tr .expand {
 }
 .budget-placeholder {
   font-style: italic;
+  cursor: pointer;
 }
 .budget-montant {
   cursor: help;
+}
+
+.budget-edit-field {
+  background-color: inherit;
+  width: 100%;
+  height: 100%;
+  margin: -8px -4px -4px -4px;
+  height: 18px;
+  border: none;
+  border-radius: 0;
+  padding-left: 3px;
+}
+
+.budget-edit-field:focus {
+  background-color: white;
+}
+.budget-colonne-montant input {
+  width: 45%;
+}
+
+.budget-edited-line input {
+  background-color: white;
 }
