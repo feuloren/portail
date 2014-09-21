@@ -234,50 +234,7 @@ budgetEditeurApp.directive('budgetMontant', function() {
     }
 });
 
-budgetEditeurApp.directive('editableText', function() {
-    return {
-        restrict: 'EA',
-        replace: true,
-        template: '<input class="budget-edit-field" type="text" ng-model="buffer.t" ng-keypress="key($event)" ng-blur="save()"/>',
-        scope: {
-            content: '='
-        },
-        link: function(scope, element, attrs) {
-            scope.buffer = {t : scope.content};
-
-            scope.save = function() {
-                scope.content = scope.buffer.t;
-            };
-
-            scope.cancel = function() {
-                scope.buffer.t = scope.content;
-            }
-
-            scope.key = function(event) {
-                if (event.key == 13) {
-                    scope.save();
-                    element.blur();
-                }
-                else if (event.key == 27) {
-                    scope.cancel();
-                    element.blur();
-                } else if (event.key == 9) {
-                    scope.save();
-                    element.blur();
-                } else if (event.key == 38 || event.key == 40) {
-                    scope.save();
-                    element.blur();
-                }
-            };
-
-            scope.$watch('content', function() {
-                scope.buffer.t = scope.content;
-            });
-        }
-    };
-});
-
-budgetEditeurApp.directive('budgetEditeurTableau', function(totalTableau) {
+budgetEditeurApp.directive('budgetEditeurTableau', function(totalTableau, $timeout) {
     return {
         restrict: 'E',
         replace: true,
@@ -289,8 +246,9 @@ budgetEditeurApp.directive('budgetEditeurTableau', function(totalTableau) {
                         '</div>'+
                     '</div>'+
                     '<budget-editeur-categorie ng-repeat="categorie in model" categorie="categorie"></budget-editeur-categorie>'+
-                    '<div class="budget-tr">'+
-                        '<div class="budget-td budget-placeholder">Nouvelle catégorie</div>'+
+                    '<div class="budget-tr budget-tr-categorie">'+
+                        '<div class="budget-td budget-placeholder" ng-show="!creating_categorie" ng-click="startNewCategorie()">Ajouter une catégorie</div>'+
+                        '<div class="budget-td budget-colonne-nom" ng-show="creating_categorie"><editable-text content="newCategorie" control="newCategorieCtrl" edit-cancel="cancelNewCategorie(control)" edit-blur="pauseNewCategorie(control)" edit-validate="validateNewCategorie(control)" /></div>'+
                         '<div class="budget-td"></div>'+
                     '</div>'+
                 '</div>',
@@ -298,7 +256,31 @@ budgetEditeurApp.directive('budgetEditeurTableau', function(totalTableau) {
             model: '=',
             nom: '@'
         },
-        controller: function ($scope, $element) {},
+        controller: function ($scope, $element) {
+            $scope.creating_categorie = false;
+            $scope.newCategorie = "";
+
+            $scope.validateNewCategorie = function(editeur) {
+                $scope.model.push({nom: editeur.get(), id: null, lignes: []});
+                $scope.newCategorie = "";
+                $scope.creating_categorie = false;
+                // activer le mode "nouvelle ligne" pour cette catégorie
+            }
+
+            $scope.cancelNewCategorie = function(editeur) {
+                editeur.undoChanges();
+                $scope.creating_categorie = false;
+            }
+
+            $scope.pauseNewCategorie = function(editeur) {
+                $scope.creating_categorie = false;
+            }
+
+            $scope.startNewCategorie = function() {
+                $scope.creating_categorie = true;
+                $scope.newCategorieCtrl.edit();
+            }
+        },
         link: function(scope, element) {
             scope.update = function() {
                 //console.log("tableau", scope.model);
@@ -316,7 +298,7 @@ budgetEditeurApp.directive('budgetEditeurTableau', function(totalTableau) {
         replace: true,
         template: '<div class="budget-sortable-group budget-tbody">'+
                     '<div class="budget-tr budget-tr-categorie">'+
-                        '<div class="budget-td budget-colonne-nom"><editable-text content="categorie.nom"/></div>'+
+                        '<div class="budget-td budget-colonne-nom"><editable-text content="categorie.nom" control="categorieNameCtrl" edit-cancel="cancelCategorie(control)" edit-blur="validateCategorie(control)" edit-validate="validateCategorie(control)" /></div>'+
                         '<div class="budget-td budget-colonne-montant"><budget-montant m="{{ totalCategorie(categorie) }}"/></div>'+
                     '</div>'+
                     '<budget-editeur-ligne-trans class="budget-tr" ng-repeat="ligne in categorie.lignes" ligne="ligne" edit-cancel="cancelLigne(control)" edit-validate="validateLigne(control)" edit-blur="validateLigne(control)" control="ligneControllers[ligne.id]">'+
@@ -324,7 +306,7 @@ budgetEditeurApp.directive('budgetEditeurTableau', function(totalTableau) {
                         '<div class="budget-td budget-colonne-montant" ng-click="edit(\'unite\')"><budget-montant m="{{ ligne.qte * ligne.unite }}"></budget-montant></div>'+
                     '</budget-editeur-ligne-trans>'+
                     '<budget-editeur-ligne-trans class="budget-tr" ligne="newLine" edit-cancel="cancelNewLigne(control)" edit-validate="validateNewLigne(control)" edit-blur="pauseNewLigne(control)" control="newLineControl">'+
-                        '<div class="budget-td budget-colonne-nom budget-placeholder" ng-click="edit(\'nom\')"><span>Nouvelle ligne</span></div>'+
+                        '<div class="budget-td budget-colonne-nom budget-placeholder" ng-click="edit(\'nom\')"><span>Ajouter une ligne</span></div>'+
                         '<div class="budget-td budget-colonne-montant"></div>'+
                     '</budget-editeur-ligne>'+
                 '</div>',
@@ -335,6 +317,13 @@ budgetEditeurApp.directive('budgetEditeurTableau', function(totalTableau) {
             scope.emptyNewLine = function() { return {nom: "", qte: 1, unite: ""}; };
             scope.newLine = scope.emptyNewLine();
             scope.ligneControllers = {};
+
+            scope.validateCategorie = function(editable) {
+                editable.save();
+            };
+            scope.cancelCategorie = function(editable) {
+                editable.undoChanges();
+            };
 
             scope.validateLigne = function(ligneEditeur) {
                 ligneEditeur.save();

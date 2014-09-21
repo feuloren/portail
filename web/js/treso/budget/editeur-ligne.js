@@ -192,18 +192,6 @@ budgetEditeurApp.directive('budgetEditeurLigneTrans', function(softCopy, $timeou
                         scope.blurCallback({control: scope.ctrl});
                     }
                 }, 0.3);
-                //$timeout(function() {
-                    /*
-                    for(var i = 0; i < scope.inputsOrder.length; i++) {
-                        if ($(scope.getInput(scope.inputsOrder[i])).is(':focus')) {
-                            return;
-                        }
-                    }
-                    */
-                    //scope.edit_mode = false;
-                    //scope.blurCallback({control: scope.ctrl});
-                 //   scope.$apply();
-                //}, 0.1);
             };
 
             scope.cursorAtEnd = function(current, target) {
@@ -223,4 +211,62 @@ budgetEditeurApp.directive('budgetEditeurLigneTrans', function(softCopy, $timeou
 
         }
     }
+});
+
+budgetEditeurApp.directive('editableText', function($timeout) {
+    return {
+        restrict: 'EA',
+        replace: true,
+        template: '<input class="budget-edit-field" type="text" ng-model="buffer.t" ng-keypress="key($event)" ng-blur="onBlur($event)"/>',
+        scope: {
+            content: '=',
+            ctrl: '=control',
+            cancelCallback: '&editCancel',
+            validateCallback: '&editValidate',
+            blurCallback: '&editBlur'
+        },
+        controller: function($scope, $element) {
+            this.edit = function() {
+                $timeout(function() {
+                    $element.focus();
+                }, 0);
+            };
+            this.save = function() {
+                $scope.content = $scope.buffer.t;
+            };
+            this.undoChanges = function() {
+                $scope.buffer.t = $scope.content;
+            };
+            this.get = function() {
+                return $scope.buffer.t;
+            }
+
+            $scope.ctrl = this;
+        },
+        link: function(scope, element, attrs) {
+            scope.buffer = {t : scope.content};
+
+            scope.key = function(event) {
+                if (event.keyCode == 13) { // Entree
+                    scope.validateCallback({control: scope.ctrl});
+                    element.blur();
+                }
+                else if (event.keyCode == 27) { // Echap
+                    scope.cancelCallback({control: scope.ctrl});
+                    element.blur();
+                } else if (event.keyCode == 9) { // Tab
+                    scope.validateCallback({control: scope.ctrl});
+                    element.blur();
+                }
+            };
+
+            scope.onBlur = function(event) {
+                scope.blurCallback({control: scope.ctrl});
+            };
+
+            scope.$watch('content', function() {
+                scope.buffer.t = scope.content;
+            });
+        }
+    };
 });
