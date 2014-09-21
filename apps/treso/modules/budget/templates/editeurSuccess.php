@@ -34,7 +34,7 @@ budgetEditeurApp.constant('budget', <?php echo json_encode($infos_budget) ?>);
 
 <h1>Budget {{ budget.nom }}</h1>
 
-<div class="row-fluid">
+<div class="row-fluid budget-tight-row">
     <div class="span6">
         <budget-editeur-tableau model="recettes" nom="Dépenses" />
     </div>
