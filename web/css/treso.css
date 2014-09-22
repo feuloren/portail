@@ -270,3 +270,7 @@ tr .expand {
 .budget-edited-line input {
   background-color: white;
 }
+
+.budget-table input.invalid {
+  background-color: #FF8D8D;
+}

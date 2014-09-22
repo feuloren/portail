@@ -325,8 +325,10 @@ budgetEditeurApp.directive('budgetEditeurTableau', function(totalTableau, $timeo
             };
 
             scope.validateLigne = function(ligneEditeur) {
-                ligneEditeur.save();
-                ligneEditeur.stop();
+                if (!ligneEditeur.hasErrors()) {
+                    ligneEditeur.save();
+                    ligneEditeur.stop();
+                }
             };
 
             scope.cancelLigne = function(ligneEditeur) {
@@ -341,12 +343,12 @@ budgetEditeurApp.directive('budgetEditeurTableau', function(totalTableau, $timeo
                 // TODO : gérer les inputs avec des virgules comme séparateur décimal
                 // directive frDecimalInput ?
                 scope.categorie.lignes.push(ligneEditeur.get());
-                ligneEditeur.set(scope.emptyNewLine());
+                ligneEditeur.reset(scope.emptyNewLine());
                 ligneEditeur.edit('nom');
             };
 
             scope.cancelNewLigne = function(ligneEditeur) {
-                ligneEditeur.set(scope.emptyNewLine());
+                ligneEditeur.reset(scope.emptyNewLine());
             }
 
             scope.totalCategorie = totalCategorie;

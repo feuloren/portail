@@ -5,12 +5,12 @@ budgetEditeurApp.directive('budgetEditeurLigneTrans', function(softCopy, $timeou
         transclude: true,
         template: '<div class="budget-edited-line">'+
                       '<div class="budget-td budget-colonne-nom" ng-if="edit_mode">'+
-                          '<input name="nom" class="budget-edit-field" type="text" ng-model="buffer.nom" ng-keypress="key($event)" placeholder="Nom" ng-blur="onBlur($event)" ng-focus="onFocus(event)"/>'+
+                          '<input name="nom" class="budget-edit-field" type="text" ng-model="buffer.nom" ng-keypress="key($event)" placeholder="Nom" ng-blur="onBlur($event)" ng-focus="onFocus(event)" ng-class="{invalid : errors.nom.length}"/>'+
                       '</div>'+
                       '<div class="budget-td budget-colonne-montant" ng-if="edit_mode">'+
-                          '<input name="qte" class="budget-edit-field" type="text" ng-model="buffer.qte" ng-keypress="key($event)" placeholder="Quantité" ng-blur="onBlur($event)" ng-focus="onFocus(event)"/>'+
+                          '<input name="qte" class="budget-edit-field" type="text" ng-model="buffer.qte" ng-keypress="key($event)" placeholder="Quantité" ng-blur="onBlur($event)" ng-focus="onFocus(event)" ng-class="{invalid : errors.qte.length}"/>'+
                           ' x '+
-                          '<input name="unite" class="budget-edit-field" type="text" ng-model="buffer.unite" ng-keypress="uniteKey($event)" placeholder="Prix unitaire" ng-blur="onBlur($event)" ng-focus="onFocus(event)"/>'+
+                          '<input name="unite" class="budget-edit-field" type="text" ng-model="buffer.unite" ng-keypress="uniteKey($event)" placeholder="Prix unitaire" ng-blur="onBlur($event)" ng-focus="onFocus(event)" ng-class="{invalid : errors.unite.length}"/>'+
                       '</div>'+
                   '</div>',
         scope: {
@@ -21,11 +21,13 @@ budgetEditeurApp.directive('budgetEditeurLigneTrans', function(softCopy, $timeou
             blurCallback: '&editBlur'
         },
         controller: function($scope, $element) {
-            if ($scope.ctrl != undefined) {
-                $scope.ctrl = this;
-            }
-
             $scope.buffer = {};
+            $scope.errors = {reset : function() {
+                                this.nom = [];
+                                this.qte = [];
+                                this.unite = [];
+                                return this;
+                             }}.reset();
 
             /*
              * Mettre la ligne en mode modifiable
@@ -74,12 +76,71 @@ budgetEditeurApp.directive('budgetEditeurLigneTrans', function(softCopy, $timeou
             this.undoChanges = function() {
                 softCopy($scope.ligne, $scope.buffer, $scope.inputsOrder);
             };
-            this.set = function(val) {
+            this.reset = function(val) {
                 softCopy(val, $scope.buffer, $scope.inputsOrder);
                 softCopy(val, $scope.ligne, $scope.inputsOrder);
+                $scope.errors.reset();
             };
+
+            this.validateNom = function() {
+                $scope.errors.nom = [];
+
+                if ($scope.buffer.nom.length == 0) {
+                    $scope.errors.nom.push("La ligne doit avoir un nom");
+                }
+            }
+            this.validateQte = function() {
+                $scope.errors.qte = [];
+
+                if ($scope.buffer.qte.length == 0) {
+                    $scope.errors.qte.push("La quantité ne peut pas être vide");
+                } else {
+                    if (angular.isNumber(!$scope.buffer.qte) && !$scope.buffer.qte.match(/\d+/)) {
+                        $scope.errors.qte.push("La quantité doit être un entier");
+                    } else if (parseInt($scope.buffer.qte) < 1) {
+                        $scope.errors.qte.push("La quantité être supérieure à 0");
+                    }
+                }
+            }
+            this.validateUnite = function() {
+                $scope.errors.unite = [];
+
+                if ($scope.buffer.unite.length == 0) {
+                    $scope.errors.unite.push("Le prix unitaire ne peut pas être vide");
+                } else if (!angular.isNumber($scope.buffer.unite)) {
+                    $scope.buffer.unite = $scope.buffer.unite.replace(',', '.');
+                    // on parse avec une regexp parceque parseFloat donne des résulats faux
+                    // par exemple parseFloat("8z4") == 8 et pas null !
+                    if (!$scope.buffer.unite.match(/\d+(\.\d+)?/)) {
+                        $scope.errors.unite.push("Le prix unitaire ne doit pas être ");
+                    }
+                }
+            }
+            this.validate = function(inputName) {
+                if (inputName == undefined) {
+                    this.validateNom();
+                    this.validateQte();
+                    this.validateUnite();
+                } else if (inputName == 'nom') {
+                    this.validateNom();
+                } else if (inputName == 'qte') {
+                    this.validateQte();
+                } else if (inputName == 'unite') {
+                    this.validateUnite();
+                } else {
+                    console.error("BudgetEditeurLigneEditeurTrans.validate : input name '" + inputName + "' in invalid");
+                }
+            }
+
+            this.hasErrors = function() {
+                return $scope.errors.nom.length > 0 || $scope.errors.qte.length > 0 || $scope.errors.unite.length > 0;
+            }
         },
         link : function(scope, element, attrs, ctrl, $transclude) {
+            if (attrs.control) {
+                scope.ctrl = ctrl;
+            }
+
             scope.edit_mode = false;
             scope.inputsOrder = ['nom', 'qte', 'unite'];
 
@@ -155,6 +216,7 @@ budgetEditeurApp.directive('budgetEditeurLigneTrans', function(softCopy, $timeou
 
                     var prev = scope.getPreviousInput(input);
                     if (prev) {
+                        ctrl.validate(input.name);
                         scope.selectInput(prev);
                     }
                 } else if (event.keyCode == 39) { // Gauche
@@ -165,6 +227,7 @@ budgetEditeurApp.directive('budgetEditeurLigneTrans', function(softCopy, $timeou
 
                     var next = scope.getNextInput(input);
                     if (next) {
+                        ctrl.validate(input.name);
                         scope.selectInput(next);
                     }
                 } else if (event.keyCode == 13 || (event.keyCode == 9 && !event.shiftKey)) { // Entrée ou Tab
@@ -175,6 +238,7 @@ budgetEditeurApp.directive('budgetEditeurLigneTrans', function(softCopy, $timeou
 
                     var next = scope.getNextInput(input);
                     if (next) {
+                        ctrl.validate(input.name);
                         scope.selectInput(next);
                     }
                 }
@@ -191,7 +255,7 @@ budgetEditeurApp.directive('budgetEditeurLigneTrans', function(softCopy, $timeou
                     // a recu le focus pendant le timeout
                     // si non on peut appeler le callback donné par le controleur parent
                     if (scope.waitingForFocus) {
-                        scope.edit_mode = false;
+                        ctrl.validate();
                         scope.blurCallback({control: ctrl});
                     }
                 }, 0.3);
@@ -206,7 +270,20 @@ budgetEditeurApp.directive('budgetEditeurLigneTrans', function(softCopy, $timeou
 
             scope.uniteKey = function(event) {
                 if (event.keyCode == 13 || (event.keyCode == 9 && !event.shiftKey)) {
-                    scope.validateCallback({control: ctrl});
+                    // On regarde si ce que l'utilisateur a saisi est correct :
+                    // nom non vide, quantité entier > 0
+                    // montant decimal positif, séparateur virgule ou point
+                    // TODO : gérer qte = 0 => suppression de la ligne
+                    ctrl.validate();
+
+                    if (ctrl.hasErrors()) {
+                        // on empeche le Tab de se proprager sinon ça va passer à l'input
+                        // suivant et le gars va pas comprendre pourquoi la ligne a pas été ajoutée
+                        event.preventDefault();
+                        event.stopPropagation();
+                    } else {
+                        scope.validateCallback({control: ctrl});
+                    }
                 } else {
                     scope.key(event);
                 }
@@ -220,7 +297,7 @@ budgetEditeurApp.directive('editableText', function($timeout) {
     return {
         restrict: 'EA',
         replace: true,
-        template: '<input class="budget-edit-field" type="text" ng-model="buffer.t" ng-keypress="key($event)" ng-blur="onBlur($event)"/>',
+        template: '<input class="budget-edit-field" type="text" ng-model="buffer.t" ng-keypress="key($event)" ng-blur="onBlur($event)" ng-class="{invalid : errors.length > 0}"/>',
         scope: {
             content: '=',
             ctrl: '=control',
@@ -229,6 +306,8 @@ budgetEditeurApp.directive('editableText', function($timeout) {
             blurCallback: '&editBlur'
         },
         controller: function($scope, $element) {
+            $scope.errors = [];
+
             this.edit = function() {
                 $timeout(function() {
                     $element.focus();
@@ -243,25 +322,43 @@ budgetEditeurApp.directive('editableText', function($timeout) {
             this.get = function() {
                 return $scope.buffer.t;
             }
+            this.validate = function() {
+                $scope.errors = [];
+                console.log($scope.buffer);
+                if ($scope.buffer.t == '') {
+                    console.log('validate fail');
+                    $scope.errors.push('Ce champ ne peut pas être vide');
+                    return false;
+                }
 
-            if ($scope.ctrl != undefined) {
-                $scope.ctrl = this;
+                return true;
             }
         },
         link: function(scope, element, attrs, ctrl) {
+            if (attrs.control) {
+                scope.ctrl = ctrl;
+            }
+
             scope.buffer = {t : scope.content};
 
             scope.key = function(event) {
                 if (event.keyCode == 13) { // Entree
-                    scope.validateCallback({control: ctrl});
-                    element.blur();
+                    if (ctrl.validate()) {
+                        scope.validateCallback({control: ctrl});
+                        element.blur();
+                    }
                 }
                 else if (event.keyCode == 27) { // Echap
                     scope.cancelCallback({control: ctrl});
                     element.blur();
                 } else if (event.keyCode == 9) { // Tab
-                    scope.validateCallback({control: ctrl});
-                    element.blur();
+                    if (ctrl.validate()) {
+                        scope.validateCallback({control: ctrl});
+                        element.blur();
+                    } else {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
                 }
             };
 
