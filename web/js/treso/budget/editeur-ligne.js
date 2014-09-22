@@ -21,7 +21,10 @@ budgetEditeurApp.directive('budgetEditeurLigneTrans', function(softCopy, $timeou
             blurCallback: '&editBlur'
         },
         controller: function($scope, $element) {
-            $scope.ctrl = this;
+            if ($scope.ctrl != undefined) {
+                $scope.ctrl = this;
+            }
+
             $scope.buffer = {};
 
             /*
@@ -76,7 +79,7 @@ budgetEditeurApp.directive('budgetEditeurLigneTrans', function(softCopy, $timeou
                 softCopy(val, $scope.ligne, $scope.inputsOrder);
             };
         },
-        link : function(scope, element, attrs, categorieCtrl, $transclude) {
+        link : function(scope, element, attrs, ctrl, $transclude) {
             scope.edit_mode = false;
             scope.inputsOrder = ['nom', 'qte', 'unite'];
 
@@ -142,7 +145,7 @@ budgetEditeurApp.directive('budgetEditeurLigneTrans', function(softCopy, $timeou
             scope.key = function(event) {
                 if (event.keyCode == 27) { // Echap
                     scope.edit_mode = false;
-                    scope.cancelCallback({control: scope.ctrl});
+                    scope.cancelCallback({control: ctrl});
                 } else if (event.keyCode == 37) { // Droite
                     var input = scope.getInputForEvent(event);
 
@@ -189,7 +192,7 @@ budgetEditeurApp.directive('budgetEditeurLigneTrans', function(softCopy, $timeou
                     // si non on peut appeler le callback donné par le controleur parent
                     if (scope.waitingForFocus) {
                         scope.edit_mode = false;
-                        scope.blurCallback({control: scope.ctrl});
+                        scope.blurCallback({control: ctrl});
                     }
                 }, 0.3);
             };
@@ -203,7 +206,7 @@ budgetEditeurApp.directive('budgetEditeurLigneTrans', function(softCopy, $timeou
 
             scope.uniteKey = function(event) {
                 if (event.keyCode == 13 || (event.keyCode == 9 && !event.shiftKey)) {
-                    scope.validateCallback({control: scope.ctrl});
+                    scope.validateCallback({control: ctrl});
                 } else {
                     scope.key(event);
                 }
@@ -241,27 +244,29 @@ budgetEditeurApp.directive('editableText', function($timeout) {
                 return $scope.buffer.t;
             }
 
-            $scope.ctrl = this;
+            if ($scope.ctrl != undefined) {
+                $scope.ctrl = this;
+            }
         },
-        link: function(scope, element, attrs) {
+        link: function(scope, element, attrs, ctrl) {
             scope.buffer = {t : scope.content};
 
             scope.key = function(event) {
                 if (event.keyCode == 13) { // Entree
-                    scope.validateCallback({control: scope.ctrl});
+                    scope.validateCallback({control: ctrl});
                     element.blur();
                 }
                 else if (event.keyCode == 27) { // Echap
-                    scope.cancelCallback({control: scope.ctrl});
+                    scope.cancelCallback({control: ctrl});
                     element.blur();
                 } else if (event.keyCode == 9) { // Tab
-                    scope.validateCallback({control: scope.ctrl});
+                    scope.validateCallback({control: ctrl});
                     element.blur();
                 }
             };
 
             scope.onBlur = function(event) {
-                scope.blurCallback({control: scope.ctrl});
+                scope.blurCallback({control: ctrl});
             };
 
             scope.$watch('content', function() {

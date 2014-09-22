@@ -301,11 +301,11 @@ budgetEditeurApp.directive('budgetEditeurTableau', function(totalTableau, $timeo
                         '<div class="budget-td budget-colonne-nom"><editable-text content="categorie.nom" control="categorieNameCtrl" edit-cancel="cancelCategorie(control)" edit-blur="validateCategorie(control)" edit-validate="validateCategorie(control)" /></div>'+
                         '<div class="budget-td budget-colonne-montant"><budget-montant m="{{ totalCategorie(categorie) }}"/></div>'+
                     '</div>'+
-                    '<budget-editeur-ligne-trans class="budget-tr" ng-repeat="ligne in categorie.lignes" ligne="ligne" edit-cancel="cancelLigne(control)" edit-validate="validateLigne(control)" edit-blur="validateLigne(control)" control="ligneControllers[ligne.id]">'+
+                    '<budget-editeur-ligne-trans class="budget-tr" ng-repeat="ligne in categorie.lignes" ligne="ligne" edit-cancel="cancelLigne(control)" edit-validate="validateLigne(control)" edit-blur="validateLigne(control)">'+
                         '<div class="budget-td budget-colonne-nom" ng-click="edit(\'nom\')">{{ ligne.nom }}</div>'+
                         '<div class="budget-td budget-colonne-montant" ng-click="edit(\'unite\')"><budget-montant m="{{ ligne.qte * ligne.unite }}"></budget-montant></div>'+
                     '</budget-editeur-ligne-trans>'+
-                    '<budget-editeur-ligne-trans class="budget-tr" ligne="newLine" edit-cancel="cancelNewLigne(control)" edit-validate="validateNewLigne(control)" edit-blur="pauseNewLigne(control)" control="newLineControl">'+
+                    '<budget-editeur-ligne-trans class="budget-tr" ligne="newLine" edit-cancel="cancelNewLigne(control)" edit-validate="validateNewLigne(control)" edit-blur="pauseNewLigne(control)">'+
                         '<div class="budget-td budget-colonne-nom budget-placeholder" ng-click="edit(\'nom\')"><span>Ajouter une ligne</span></div>'+
                         '<div class="budget-td budget-colonne-montant"></div>'+
                     '</budget-editeur-ligne>'+
@@ -316,7 +316,6 @@ budgetEditeurApp.directive('budgetEditeurTableau', function(totalTableau, $timeo
         link: function(scope, element) {
             scope.emptyNewLine = function() { return {nom: "", qte: 1, unite: ""}; };
             scope.newLine = scope.emptyNewLine();
-            scope.ligneControllers = {};
 
             scope.validateCategorie = function(editable) {
                 editable.save();
