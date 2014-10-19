@@ -3,14 +3,14 @@ budgetEditeurApp.directive('budgetEditeurLigneTrans', function(softCopy, $timeou
         restrict: 'E',
         replace: true,
         transclude: true,
-        template: '<div class="budget-edited-line">'+
-                      '<div class="budget-td budget-colonne-nom" ng-if="edit_mode">'+
-                          '<input name="nom" class="budget-edit-field" type="text" ng-model="buffer.nom" ng-keypress="key($event)" placeholder="Nom" ng-blur="onBlur($event)" ng-focus="onFocus(event)" ng-class="{invalid : errors.nom.length}"/>'+
+        template: '<div>'+
+                      '<div class="budget-td budget-colonne-nom budget-edited-line" ng-if="edit_mode">'+
+                          '<input name="nom" class="budget-edit-field" type="text" ng-model="buffer.nom" ng-keydown="key($event)" placeholder="Nom" ng-blur="onBlur($event)" ng-focus="onFocus(event)" ng-class="{invalid : errors.nom.length}"/>'+
                       '</div>'+
-                      '<div class="budget-td budget-colonne-montant" ng-if="edit_mode">'+
-                          '<input name="qte" class="budget-edit-field" type="text" ng-model="buffer.qte" ng-keypress="key($event)" placeholder="Quantité" ng-blur="onBlur($event)" ng-focus="onFocus(event)" ng-class="{invalid : errors.qte.length}"/>'+
+                      '<div class="budget-td budget-colonne-montant budget-edited-line" ng-if="edit_mode">'+
+                          '<input name="qte" class="budget-edit-field budget-edited-qte" type="text" ng-model="buffer.qte" ng-keydown="key($event)" placeholder="Quantité" ng-blur="onBlur($event)" ng-focus="onFocus(event)" ng-class="{invalid : errors.qte.length}"/>'+
                           ' x '+
-                          '<input name="unite" class="budget-edit-field" type="text" ng-model="buffer.unite" ng-keypress="uniteKey($event)" placeholder="Prix unitaire" ng-blur="onBlur($event)" ng-focus="onFocus(event)" ng-class="{invalid : errors.unite.length}"/>'+
+                          '<input name="unite" class="budget-edit-field budget-edited-montant" type="text" ng-model="buffer.unite" ng-keydown="uniteKey($event)" placeholder="Prix unitaire" ng-blur="onBlur($event)" ng-focus="onFocus(event)" ng-class="{invalid : errors.unite.length}"/>'+
                       '</div>'+
                   '</div>',
         scope: {
@@ -140,6 +140,7 @@ budgetEditeurApp.directive('budgetEditeurLigneTrans', function(softCopy, $timeou
             if (attrs.control) {
                 scope.ctrl = ctrl;
             }
+            scope.hasErrors = ctrl.hasErrors;
 
             scope.edit_mode = false;
             scope.inputsOrder = ['nom', 'qte', 'unite'];

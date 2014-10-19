@@ -263,8 +263,9 @@ tr .expand {
 .budget-edit-field:focus {
   background-color: white;
 }
-.budget-colonne-montant input {
-  width: 45%;
+input.budget-edited-montant {
+  width: 60%;
+  text-align: right;
 }
 
 .budget-edited-line input {
@@ -273,4 +274,11 @@ tr .expand {
 
 .budget-table input.invalid {
   background-color: #FF8D8D;
+}
+
+input.budget-edited-qte {
+  width: 25%;
+  text-align: right;
+  float: left;
+  margin-top: -4px;
 }
