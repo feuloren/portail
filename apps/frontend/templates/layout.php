@@ -11,6 +11,13 @@
     <?php include_javascripts() ?>   
   </head>
   <body>
+<!-- SUPERTAG CODE ASYNC v2.9.8.6 -->
+<script type="text/javascript">
+(function(s,d,src) {
+    var st = d.createElement(s); st.type = 'text/javascript';st.async = true;st.src = src;
+    var sc = d.getElementsByTagName(s)[0]; sc.parentNode.insertBefore(st, sc);
+})('script', document, '//c.supert.ag/p/0002be/supertag-async.js');
+</script>
     <div class="navbar navbar-inverse navbar-static-top">
         <div class="navbar-inner">
             <div class="container">
